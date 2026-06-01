@@ -9,6 +9,7 @@ import utils
 import skill
 import mcp_config
 import agentcore_sigv4_auth
+from tavily_tool_interceptor import TavilyToolCallInterceptor
 import datetime
 import boto3
         
@@ -719,6 +720,12 @@ BASE_SYSTEM_PROMPT = (
     "한국어로 답변하세요."
 )
 
+TAVILY_TOOL_PROMPT = (
+    "\n\n## Tavily 검색 도구\n"
+    "tavily_search 호출 시 country는 ISO 코드(KR, US)를 쓰지 마세요. "
+    "한국 검색이 필요하면 country를 생략하거나 'south korea'만 사용하세요."
+)
+
 MEMORY_SYSTEM_PROMPT = (
     "## 메모리 관리\n"
     "사용자에 대한 정보를 기억하거나, 과거 대화/결정/선호를 찾을 때는 반드시 메모리 도구를 사용하세요:\n"
@@ -964,6 +971,8 @@ def load_multiple_mcp_server_parameters(mcp_json: dict):
                     params["timeout"] = timedelta(seconds=cfg["timeout_seconds"])
                 if cfg.get("sse_read_timeout_seconds"):
                     params["sse_read_timeout"] = timedelta(seconds=cfg["sse_read_timeout_seconds"])
+                if "terminate_on_close" in cfg:
+                    params["terminate_on_close"] = cfg["terminate_on_close"]
                 server_info[server_name] = params
             else:
                 server_info[server_name] = {
@@ -986,14 +995,19 @@ async def create_agent(mcp_servers: list, skill_list: list, history_mode: str="D
     server_params = load_multiple_mcp_server_parameters(mcp_json)
     # logger.info(f"server_params: {server_params}")    
 
-    try:
-        client = MultiServerMCPClient(server_params)
-        logger.info("MCP client is initialized successfully")
-
-        has_agentcore = any(
+    has_agentcore = any(
             cfg.get("auth") == "bedrock_agentcore_sigv4"
             for cfg in (mcp_json.get("mcpServers") or {}).values()
         )
+
+    try:
+        interceptors = [TavilyToolCallInterceptor()] if has_agentcore else None
+        client = MultiServerMCPClient(
+            server_params,
+            tool_interceptors=interceptors,
+        )
+        logger.info("MCP client is initialized successfully")
+
         if has_agentcore:
             logger.info(
                 "Loading MCP tools from Bedrock AgentCore (cold start may take 1-2 minutes)..."
@@ -1040,6 +1054,9 @@ async def create_agent(mcp_servers: list, skill_list: list, history_mode: str="D
 
     else:
         system_prompt = BASE_SYSTEM_PROMPT
+
+    if has_agentcore and any(getattr(t, "name", "").startswith("tavily_") for t in tools):
+        system_prompt = (system_prompt or BASE_SYSTEM_PROMPT) + TAVILY_TOOL_PROMPT
         
     tool_list = [tool.name for tool in tools] if tools else []
     logger.info(f"tool_list: {tool_list}")

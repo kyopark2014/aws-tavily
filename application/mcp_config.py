@@ -146,6 +146,7 @@ def load_config(mcp_type):
                     "auth": "bedrock_agentcore_sigv4",
                     "timeout_seconds": 180,
                     "sse_read_timeout_seconds": 300,
+                    "terminate_on_close": False,
                     "headers": {
                         "Content-Type": "application/json",
                         "Accept": "application/json, text/event-stream",
