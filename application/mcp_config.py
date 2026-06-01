@@ -140,7 +140,7 @@ def load_config(mcp_type):
         
         return {
             "mcpServers": {
-                "use_aws": {
+                "tavily-search": {
                     "type": "streamable_http",
                     "url": mcp_url,
                     "auth": "bedrock_agentcore_sigv4",
