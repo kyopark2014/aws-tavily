@@ -31,7 +31,7 @@ MCP로 제공되는 도구는 아래와 같습니다.
 
 ### 요금 안내
 
-Marketplace 요금 페이지 기준:
+Marketplace 요금 페이지 기준은 아래와 같습니다.
 
 - **제품 라이선스·사용량**: AWS Marketplace 외부에서 Tavily와 체결한 라이선스로 관리됩니다. 구독 시 Marketplace 밖에서 구매한 라이선스를 연결해 활성화합니다.
 - **AWS 인프라**: Bedrock AgentCore Runtime 등 AWS 리소스 비용은 AWS 청구서에 포함됩니다. [AWS Pricing Calculator](https://calculator.aws/)로 인프라 비용을 추정할 수 있습니다.
@@ -94,10 +94,7 @@ flowchart TD
 python uninstaller.py
 ```
 
-`uninstaller.py`는 `installer.py`가 생성한 AWS 리소스를 **역순**으로 삭제합니다. Marketplace ECR 이미지는 삭제하지 않으며, **AWS Marketplace 구독도 해지하지 않습니다.**
-
-
-`uninstaller.py`로 삭제되지 않는 항목은 아래와 같습니다.
+`uninstaller.py`는 `installer.py`가 생성한 AWS 리소스를 **역순**으로 삭제합니다. Marketplace ECR 이미지는 삭제하지 않으며, **AWS Marketplace 구독도 해지하지 않습니다.** `uninstaller.py`로 삭제되지 않는 항목은 아래와 같습니다.
 
 | 항목 | 이유 |
 |------|------|
@@ -106,14 +103,9 @@ python uninstaller.py
 | CloudWatch Logs 로그 그룹 | Runtime 삭제 후에도 보존될 수 있음(필요 시 Console에서 정리) |
 
 
-
-
-
 ## 애플리케이션의 활용
 
-`application/` 디렉터리의 Streamlit 앱은 Agent 모드에서 `aws-tavily` MCP 타입을 선택하면, 배포된 AgentCore Runtime에 SigV4 인증으로 연결합니다 (`application/mcp_config.py`). LangGraph 에이전트는 Tavily 도구 인자(예: `country` ISO 코드)를 사전에 정규화합니다 (`application/tavily_tool_interceptor.py`).
-
-[mcp_config.py](./application/mcp_config.py)에서는 아래와 같이 Tavily MCP를 위한 mcp.json을 설정합니다. 여기에서는 AgentCore에 IAM으로 인증하고 있습니다.
+`application/` 디렉터리의 Streamlit 앱은 Agent 모드에서 `aws-tavily` MCP 타입을 선택하면, 배포된 AgentCore Runtime에 SigV4 인증으로 연결합니다. [mcp_config.py](./application/mcp_config.py)에서는 아래와 같이 Tavily MCP를 위한 mcp.json을 설정합니다. 여기에서는 AgentCore에 IAM으로 인증하고 있습니다.
 
 ```
 mcp_url = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
