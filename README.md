@@ -35,6 +35,11 @@ Marketplace 요금 페이지 기준은 아래와 같습니다.
 - **AWS 인프라**: Bedrock AgentCore Runtime 등 AWS 리소스 비용은 AWS 청구서에 포함됩니다. [AWS Pricing Calculator](https://calculator.aws/)로 인프라 비용을 추정할 수 있습니다.
 - 구독은 종료일 없이 유지되며 언제든 취소할 수 있습니다(외부 라이선스 상태는 별도).
 
+| 제품 | 비용 | 특이사항 |
+|------|------|----------|
+| **Tavily MCP Server** | Marketplace 등록 비용 없음 | API Key + AWS 인프라 비용 별도 |
+| **Tavily Enterprise** | **$49,000 / 년** | 90일 무료 체험 제공 |
+
 ## 배포
 
 ### 사전 준비
