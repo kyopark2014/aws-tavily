@@ -56,7 +56,7 @@ git clone https://github.com/kyopark2014/aws-tavily
 `installer.py`로 설치합니다. 이때 IAM 권한부터 Runtime 생성·갱신을 수행합니다.
 
 ```bash
-python installer.py
+cd ws-tavily && python installer.py
 ```
 
 
