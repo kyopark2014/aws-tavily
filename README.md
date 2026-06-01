@@ -8,17 +8,7 @@
 
 Tavily MCP Server는 경량 MCP 서버로, 배포 후 클라이언트가 자연어 요청을 내면 실시간 검색·추출·크롤링 워크플로가 실행됩니다. 결과는 요약, 추출 데이터, 메타데이터 등 **구조화된 컨텍스트**로 반환되어 모델 추론 루프에 바로 주입할 수 있습니다.
 
-| 항목 | 내용 |
-|------|------|
-| 판매자 | Tavily |
-| 배포 방식 | Container image (Linux) |
-| 유형 | MCP server |
-| 지원 서비스 | [Amazon Bedrock AgentCore](https://aws.amazon.com/bedrock/agentcore/) |
-| 배포 옵션 | Tavily MCP v0 |
-| 최신 버전 | `tavily-mcp-v0.1.2` |
-| 카테고리 | ML Solutions, Research, Generative AI |
-
-## MCP 도구
+### MCP 도구
 
 MCP로 제공되는 도구는 아래와 같습니다.
 
@@ -31,7 +21,7 @@ MCP로 제공되는 도구는 아래와 같습니다.
 
 도구 인자 상세는 [Tavily Search API 문서](https://docs.tavily.com/documentation/api-reference/endpoint/search)를 참고하세요.
 
-## AWS Marketplace 구독 방법
+### AWS Marketplace 구독 방법
 
 1. [Tavily MCP Server](https://aws.amazon.com/marketplace/pp/prodview-twjga5bwmoszq) 페이지에서 **View purchase options** 선택
 2. 약관(EULA) 확인 후 구독
