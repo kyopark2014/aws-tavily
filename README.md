@@ -1,8 +1,6 @@
 # Tavily MCP Server on AWS
 
-[Tavily MCP Server](https://aws.amazon.com/marketplace/pp/prodview-twjga5bwmoszq)는 Model Context Protocol(MCP)을 통해 AI 에이전트에 실시간 웹 검색, 지능형 크롤링, 구조화된 데이터 추출 기능을 제공하는 프로덕션 준비 컨테이너 이미지입니다. Amazon Bedrock AgentCore에서 실행되며, Claude·Cursor·커스텀 LLM 에이전트 등 MCP 호환 클라이언트가 자연어 요청으로 Tavily 도구를 호출할 수 있습니다.
-
-이 저장소는 Marketplace에서 제공하는 Tavily MCP 컨테이너를 Bedrock AgentCore Runtime에 배포하고, Streamlit 기반 에이전트 UI에서 `aws-tavily` MCP로 연동하는 예제를 포함합니다.
+[Tavily MCP Server](https://aws.amazon.com/marketplace/pp/prodview-twjga5bwmoszq)는 Model Context Protocol(MCP)을 통해 AI 에이전트에 실시간 웹 검색, 지능형 크롤링, 구조화된 데이터 추출 기능을 제공하는 프로덕션 준비 컨테이너 이미지입니다. Amazon Bedrock AgentCore에서 실행되며, Claude·Cursor·커스텀 LLM 에이전트 등 MCP 호환 클라이언트가 자연어 요청으로 Tavily 도구를 호출할 수 있습니다. 이 저장소는 Marketplace에서 제공하는 Tavily MCP 컨테이너를 Bedrock AgentCore Runtime에 배포하고, Streamlit 기반 에이전트 UI에서 `aws-tavily` MCP로 연동하는 예제를 포함합니다.
 
 ## 개요
 
