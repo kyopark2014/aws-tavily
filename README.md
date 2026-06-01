@@ -157,6 +157,29 @@ mcp_url = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_a
 
 제품 라이선스·사용량은 Marketplace 구독 및 판매자(EULA) 조건에 따릅니다.
 
+
+
+## 실행 결과
+
+아래와 같이 streamlit을 실행합니다.
+
+```bash
+streamlit run application/app.py
+```
+
+아래와 같이 aws-tavily가 선택되어 있습니다.
+
+<img width="304" height="344" alt="image" src="https://github.com/user-attachments/assets/8a295cb1-080d-42f5-9a8e-16e85e0d0028" />
+
+이후 아래와 같이 "강남역 맛집?"을 검색하면, tavily_search를 통해 검색을 수행합니다.
+
+<img width="725" height="716" alt="image" src="https://github.com/user-attachments/assets/3364be77-557d-4acb-9bd0-221a85a63d4a" />
+
+아래와 같은 응답을 얻을 수 있습니다.
+
+<img width="667" height="753" alt="image" src="https://github.com/user-attachments/assets/c72fb34f-0413-479b-ab99-0b36599d92dd" />
+
+
 ## 참고 링크
 
 - [Tavily MCP Server (AWS Marketplace)](https://aws.amazon.com/marketplace/pp/prodview-twjga5bwmoszq)
