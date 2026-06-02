@@ -25,10 +25,9 @@ logging.basicConfig(
 logger = logging.getLogger("streamlit")
 
 config = utils.load_config()
-sharing_url = config.get("sharing_url")
 
 # title
-st.set_page_config(page_title='RAG', page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title='Agent', page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
 
 mode_descriptions = {
     "일상적인 대화": [
@@ -58,7 +57,7 @@ with st.sidebar:
         "Amazon Bedrock을 이용해 다양한 형태의 대화를 구현합니다." 
         "여기에서는 SKILL과 MCP를 이용해 agent의 기능을 확장합니다." 
         "주요 코드는 LangGraph를 이용해 구현되었습니다.\n"
-        "상세한 코드는 [Github](https://github.com/kyopark2014/rag-s3=vector)을 참조하세요."
+        "상세한 코드는 [Github](https://github.com/kyopark2014/aws-tavily)을 참조하세요."
     )
 
     st.subheader("🐱 대화 형태")

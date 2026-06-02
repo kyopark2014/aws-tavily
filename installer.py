@@ -18,7 +18,7 @@ ROLE_VALIDATION_BASE_DELAY_SEC = 5
 ROLE_VALIDATION_MAX_DELAY_SEC = 15
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(script_dir, "config.json")
+config_path = os.path.join(script_dir, "application", "config.json")
 
 # Pre-built Tavily MCP container image (override via config.json "container_image_uri")
 DEFAULT_CONTAINER_IMAGE_URI = (
