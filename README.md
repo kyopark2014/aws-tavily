@@ -65,7 +65,7 @@ cd aws-tavily && python installer.py
 
 ### 배포 흐름
 
-`installer.py`는 Marketplace에 등록된 **사전 빌드 ECR 이미지 URI**를 지정하고, Bedrock AgentCore Control Plane API로 Runtime을 생성하거나 갱신합니다. 이미지 레이어를 로컬에서 받아 빌드하지 않으며, Runtime이 기동될 때 지정 URI의 컨테이너를 pull 합니다.
+`installer.py`는 Marketplace에 등록된 **사전 빌드 ECR 이미지 URI**를 지정하고, Bedrock AgentCore Control Plane API로 Runtime을 생성하거나 갱신합니다. 이미지 레이어를 로컬에서 받아 빌드하지 않으며, Runtime이 기동될 때 지정 URI의 컨테이너를 pull 합니다. Runtime 이름은 `agent_runtime_aws_tavily`, 리전은 `us-east-1`로 고정되어 있어 다른 프로젝트에서 이미 배포한 Runtime을 재활용할 수 있습니다.
 
 ```mermaid
 flowchart TD
@@ -108,13 +108,16 @@ python uninstaller.py
 
 ## 애플리케이션의 활용
 
-`application/` 디렉터리의 Streamlit 앱은 Agent 모드에서 `aws-tavily` MCP 타입을 선택하면, 배포된 AgentCore Runtime에 SigV4 인증으로 연결합니다. [mcp_config.py](./application/mcp_config.py)에서는 Agent Runtime ARN을 조회한 뒤 아래와 같이 Tavily MCP용 `mcp.json`을 구성합니다. [langgraph_agent.py](./application/langgraph_agent.py)는 `auth_type`이 `aws_sigv4`인 경우 [agentcore_sigv4_auth.py](./application/agentcore_sigv4_auth.py)의 `AgentCoreSigV4Auth`로 요청에 IAM 서명을 적용합니다.
+`application/` 디렉터리의 Streamlit 앱은 Agent 모드에서 `aws-tavily` MCP 타입을 선택하면, `us-east-1`에 배포된 `agent_runtime_aws_tavily` Runtime에 SigV4 인증으로 연결합니다. [mcp_config.py](./application/mcp_config.py)에서는 고정 Runtime 이름으로 ARN을 조회한 뒤 아래와 같이 Tavily MCP용 `mcp.json`을 구성합니다. [langgraph_agent.py](./application/langgraph_agent.py)는 `auth_type`이 `aws_sigv4`인 경우 [agentcore_sigv4_auth.py](./application/agentcore_sigv4_auth.py)의 `AgentCoreSigV4Auth`로 요청에 IAM 서명을 적용합니다.
 
 ```python
+AWS_TAVILY_RUNTIME_NAME = "agent_runtime_aws_tavily"
+AWS_TAVILY_RUNTIME_REGION = "us-east-1"
+
 agent_arn = get_agent_runtime_arn("aws-tavily")
 encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
 mcp_url = (
-    f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/"
+    f"https://bedrock-agentcore.{AWS_TAVILY_RUNTIME_REGION}.amazonaws.com/runtimes/"
     f"{encoded_arn}/invocations?qualifier=DEFAULT"
 )
 
@@ -124,7 +127,7 @@ mcp_url = (
             "type": "streamable_http",
             "url": mcp_url,
             "auth_type": "aws_sigv4",
-            "auth_region": region,
+            "auth_region": AWS_TAVILY_RUNTIME_REGION,
             "auth_service": "bedrock-agentcore",
         }
     }

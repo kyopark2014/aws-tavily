@@ -24,6 +24,8 @@ config_path = os.path.join(script_dir, "application", "config.json")
 DEFAULT_CONTAINER_IMAGE_URI = (
     "709825985650.dkr.ecr.us-east-1.amazonaws.com/tavily/tavily-mcp:v0.1.2"
 )
+AWS_TAVILY_RUNTIME_NAME = "agent_runtime_aws_tavily"
+AWS_TAVILY_RUNTIME_REGION = "us-east-1"
 
 
 def get_container_image_uri(config):
@@ -447,7 +449,7 @@ def update_agentcore_json(agent_runtime_arn):
 
 def create_agent_runtime_func(config, runtime_name, container_uri):
     """Create a new Agent Runtime."""
-    aws_region = config['region']
+    aws_region = AWS_TAVILY_RUNTIME_REGION
     agent_runtime_role = config.get('agent_runtime_role')
     
     if not agent_runtime_role:
@@ -497,7 +499,7 @@ def create_agent_runtime_func(config, runtime_name, container_uri):
 
 def update_agent_runtime_func(config, runtime_name, agent_runtime_id, container_uri):
     """Update an existing Agent Runtime."""
-    aws_region = config['region']
+    aws_region = AWS_TAVILY_RUNTIME_REGION
     agent_runtime_role = config.get('agent_runtime_role')
     
     if not agent_runtime_role:
@@ -550,20 +552,14 @@ def create_agent_runtime():
     
     try:
         config = load_config()
-        aws_region = config['region']
-        project_name = config.get('projectName')
-        
-        # Get current folder name
-        current_folder_name = os.path.basename(os.getcwd())
-        repository_name = f"{project_name}_{current_folder_name}"
-        
-        # Replace hyphens with underscores for agent runtime name (AWS validation requirement)
-        runtime_name = repository_name.replace('-', '_')
+        aws_region = AWS_TAVILY_RUNTIME_REGION
+        runtime_name = AWS_TAVILY_RUNTIME_NAME
         
         container_uri = get_container_image_uri(config)
         update_config("container_image_uri", container_uri)
 
         print(f"Runtime name: {runtime_name}")
+        print(f"Region: {aws_region}")
         print(f"Container image: {container_uri}")
         
         # Check if agent runtime already exists
