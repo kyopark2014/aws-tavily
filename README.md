@@ -59,7 +59,7 @@ git clone https://github.com/kyopark2014/aws-tavily
 `installer.py`로 설치합니다. 이때 IAM 권한부터 Runtime 생성·갱신을 수행합니다.
 
 ```bash
-cd ws-tavily && python installer.py
+cd aws-tavily && python installer.py
 ```
 
 
@@ -108,28 +108,27 @@ python uninstaller.py
 
 ## 애플리케이션의 활용
 
-`application/` 디렉터리의 Streamlit 앱은 Agent 모드에서 `aws-tavily` MCP 타입을 선택하면, 배포된 AgentCore Runtime에 SigV4 인증으로 연결합니다. [mcp_config.py](./application/mcp_config.py)에서는 아래와 같이 Tavily MCP를 위한 mcp.json을 설정합니다. 여기에서는 AgentCore에 IAM으로 인증하고 있습니다.
+`application/` 디렉터리의 Streamlit 앱은 Agent 모드에서 `aws-tavily` MCP 타입을 선택하면, 배포된 AgentCore Runtime에 SigV4 인증으로 연결합니다. [mcp_config.py](./application/mcp_config.py)에서는 Agent Runtime ARN을 조회한 뒤 아래와 같이 Tavily MCP용 `mcp.json`을 구성합니다. [langgraph_agent.py](./application/langgraph_agent.py)는 `auth_type`이 `aws_sigv4`인 경우 [agentcore_sigv4_auth.py](./application/agentcore_sigv4_auth.py)의 `AgentCoreSigV4Auth`로 요청에 IAM 서명을 적용합니다.
 
-```
-mcp_url = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
-        
+```python
+agent_arn = get_agent_runtime_arn("aws-tavily")
+encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
+mcp_url = (
+    f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/"
+    f"{encoded_arn}/invocations?qualifier=DEFAULT"
+)
+
 {
     "mcpServers": {
         "tavily-search": {
             "type": "streamable_http",
             "url": mcp_url,
-            "auth": "bedrock_agentcore_sigv4",
-            "timeout_seconds": 180,
-            "sse_read_timeout_seconds": 300,
-            "terminate_on_close": False,
-            "headers": {
-                "Content-Type": "application/json",
-                "Accept": "application/json, text/event-stream",
-                "User-Agent": "aws-tavily-streamlit-mcp-client/1.0"
-            }
+            "auth_type": "aws_sigv4",
+            "auth_region": region,
+            "auth_service": "bedrock-agentcore",
         }
     }
-}    
+}
 ```
 
 

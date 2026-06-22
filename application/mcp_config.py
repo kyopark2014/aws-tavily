@@ -131,30 +131,28 @@ def load_config(mcp_type):
     elif mcp_type == "aws-tavily":
         agent_arn = get_agent_runtime_arn(mcp_type)
         logger.info(f"mcp_type: {mcp_type}, agent_arn: {agent_arn}")
-        if agent_arn is None:
-            logger.warning(f"Agent runtime for '{mcp_type}' not found. Skipping MCP server. Ensure agent_runtime_{mcp_type.replace('-', '_')} is deployed.")
-            return None
-        encoded_arn = agent_arn.replace(':', '%3A').replace('/', '%2F')
-        
-        mcp_url = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
-        
+        if not agent_arn:
+            logger.info(
+                "AgentCore aws-tavily MCP skipped: "
+                f"runtime {projectName.lower().replace('-', '_')}_aws_tavily not found."
+            )
+            return {}
+        encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
+        mcp_url = (
+            f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/"
+            f"{encoded_arn}/invocations?qualifier=DEFAULT"
+        )
         return {
             "mcpServers": {
                 "tavily-search": {
                     "type": "streamable_http",
                     "url": mcp_url,
-                    "auth": "bedrock_agentcore_sigv4",
-                    "timeout_seconds": 180,
-                    "sse_read_timeout_seconds": 300,
-                    "terminate_on_close": False,
-                    "headers": {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json, text/event-stream",
-                        "User-Agent": "aws-tavily-streamlit-mcp-client/1.0"
-                    }
+                    "auth_type": "aws_sigv4",
+                    "auth_region": region,
+                    "auth_service": "bedrock-agentcore",
                 }
             }
-        }    
+        }
     
     elif mcp_type == "사용자 설정":
         return mcp_user_config

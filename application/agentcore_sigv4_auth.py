@@ -1,39 +1,29 @@
-"""AWS SigV4 signing for Bedrock AgentCore streamable-HTTP MCP clients."""
-
-from collections.abc import Generator
-
-import boto3
 import httpx
+import boto3
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
-from botocore.credentials import Credentials
-
-BEDROCK_AGENTCORE_SERVICE = "bedrock-agentcore"
 
 
-class SigV4HTTPXAuth(httpx.Auth):
-    """Sign httpx requests with AWS SigV4 (sync and async)."""
+class AgentCoreSigV4Auth(httpx.Auth):
+    def __init__(self, region: str, service: str = "bedrock-agentcore"):
+        self.region = region
+        self.service = service
 
-    def __init__(self, credentials: Credentials, service: str, region: str) -> None:
-        self.signer = SigV4Auth(credentials, service, region)
-
-    def auth_flow(self, request: httpx.Request) -> Generator[httpx.Request, httpx.Response, None]:
+    def auth_flow(self, request: httpx.Request):
+        credentials = boto3.Session().get_credentials().get_frozen_credentials()
         headers = dict(request.headers)
-        headers.pop("connection", None)
+        body = request.content
 
         aws_request = AWSRequest(
             method=request.method,
             url=str(request.url),
-            data=request.content,
+            data=body,
             headers=headers,
         )
-        self.signer.add_auth(aws_request)
-        request.headers.update(dict(aws_request.headers))
+        SigV4Auth(credentials, self.service, self.region).add_auth(aws_request)
+        prepared = aws_request.prepare()
+
+        for key, value in prepared.headers.items():
+            request.headers[key] = value
+
         yield request
-
-
-def get_bedrock_agentcore_sigv4_auth(region: str) -> SigV4HTTPXAuth:
-    creds = boto3.Session().get_credentials()
-    if creds is None:
-        raise RuntimeError("AWS credentials not found; configure credentials for AgentCore MCP access.")
-    return SigV4HTTPXAuth(creds.get_frozen_credentials(), BEDROCK_AGENTCORE_SERVICE, region)

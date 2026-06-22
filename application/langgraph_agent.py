@@ -13,7 +13,6 @@ from tavily_tool_interceptor import TavilyToolCallInterceptor
 import datetime
 import boto3
         
-from datetime import timedelta
 from typing import Literal, Optional
 from langgraph.prebuilt import ToolNode
 from langgraph.graph import START, END, StateGraph
@@ -963,16 +962,11 @@ def load_multiple_mcp_server_parameters(mcp_json: dict):
                     "url": cfg.get("url"),
                     "headers": cfg.get("headers", {}),
                 }
-                if cfg.get("auth") == "bedrock_agentcore_sigv4":
-                    params["auth"] = agentcore_sigv4_auth.get_bedrock_agentcore_sigv4_auth(
-                        mcp_config.region
+                if cfg.get("auth_type") == "aws_sigv4":
+                    params["auth"] = agentcore_sigv4_auth.AgentCoreSigV4Auth(
+                        region=cfg.get("auth_region", "us-east-1"),
+                        service=cfg.get("auth_service", "bedrock-agentcore"),
                     )
-                if cfg.get("timeout_seconds"):
-                    params["timeout"] = timedelta(seconds=cfg["timeout_seconds"])
-                if cfg.get("sse_read_timeout_seconds"):
-                    params["sse_read_timeout"] = timedelta(seconds=cfg["sse_read_timeout_seconds"])
-                if "terminate_on_close" in cfg:
-                    params["terminate_on_close"] = cfg["terminate_on_close"]
                 server_info[server_name] = params
             else:
                 server_info[server_name] = {
@@ -996,7 +990,7 @@ async def create_agent(mcp_servers: list, skill_list: list, history_mode: str="D
     # logger.info(f"server_params: {server_params}")    
 
     has_agentcore = any(
-            cfg.get("auth") == "bedrock_agentcore_sigv4"
+            cfg.get("auth_type") == "aws_sigv4"
             for cfg in (mcp_json.get("mcpServers") or {}).values()
         )
 
