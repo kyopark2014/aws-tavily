@@ -9,12 +9,11 @@ streamlit-paste-button>=0.1.2
 langchain-aws>=0.2.0
 langchain-core>=0.3.0
 langchain-community>=0.3.0
-langchain-mcp-adapters>=0.1.0
 langchain-text-splitters>=0.3.0
 langgraph>=0.2.0
 
 # MCP servers (application/mcp_server_*.py)
-mcp>=1.0.0
+mcp>=2.1.1
 
 # HTTP / SigV4 auth
 httpx>=0.27.0
@@ -34,3 +33,4 @@ matplotlib>=3.8.0
 defusedxml>=0.7.1
 lxml>=5.0.0
 openpyxl>=3.1.0
+httpx2
